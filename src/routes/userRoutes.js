@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const registerController = require('../controllers/registerController');
 const loginController = require('../controllers/loginController');
+const verifyEmailController = require('../controllers/verifyEmailController');
 
 /**
  * @swagger
@@ -78,5 +79,29 @@ router.post('/register', registerController.registerUser);
  *         description: Nieprawidłowy email lub hasło
  */
 router.post('/login', loginController.loginUser);
+
+/**
+ * @swagger
+ * /api/users/verify/{token}:
+ *   get:
+ *     summary: Weryfikacja e-maila użytkownika
+ *     tags: 
+ *       - Authorization
+ *     description: Weryfikuje e-mail użytkownika na podstawie tokena
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         description: Token weryfikacyjny wysłany w e-mailu
+ *         schema:
+ *           type: string
+ *           example: abc123token
+ *     responses:
+ *       200:
+ *         description: Konto zostało zweryfikowane pomyślnie
+ *       400:
+ *         description: Błąd weryfikacji lub nieprawidłowy token
+ */
+router.get('/verify/:token', verifyEmailController.verifyEmail);
 
 module.exports = router;
