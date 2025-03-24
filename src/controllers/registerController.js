@@ -11,6 +11,9 @@ exports.registerUser = async (req, res) => {
     if (!first_name || !last_name || !email || !password || !confirmPassword) {
       return res.status(400).json({ message: 'Wszystkie pola są wymagane' });
     }
+    if (first_name.length > 255 || last_name.length > 255 || email.length > 255) {
+      return res.status(400).json({ message: 'Imię, nazwisko i email nie mogą przekroczyć 255 znaków' });
+    }
     if (password.length < 8) {
       return res.status(400).json({ message: 'Hasło musi mieć co najmniej 8 znaków' });
     }
