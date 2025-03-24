@@ -1,4 +1,6 @@
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
 const config = require('../../config/config.json');
 
 const transporter = nodemailer.createTransport({
@@ -12,17 +14,17 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendVerificationEmail = async (userEmail, token) => {
-  const verificationLink = `http://localhost:3000/api/users/verify/${token}`;
+  const verificationLink = `${config.development.BASE_URL}/api/users/verify/${token}`;
+
+  const htmlTemplate = fs.readFileSync(path.join(__dirname, '../views/verificationEmailTemplate.html'), 'utf-8');
+
+  const htmlContent = htmlTemplate.replace(/{{verificationLink}}/g, verificationLink);
+
   const mailOptions = {
     from: `"AB Planer" <${config.development.EMAIL_USER}>`,
     to: userEmail,
     subject: 'Potwierdź swoje konto',
-    html: `
-      <h2>Witaj w AB Planer!</h2>
-      <p>Kliknij poniższy link, aby aktywować swoje konto:</p>
-      <a href="${verificationLink}" style="background:#007bff;color:#fff;padding:10px 15px;border-radius:5px;text-decoration:none;">Aktywuj konto</a>
-      <p>Jeśli nie rejestrowałeś/aś się w naszej aplikacji, zignoruj ten e-mail.</p>
-    `,
+    html: htmlContent,
   };
 
   await transporter.sendMail(mailOptions);

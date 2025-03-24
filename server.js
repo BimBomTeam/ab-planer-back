@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const userRoutes = require('./src/routes/userRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const config = require('./config/config.json');
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: 'http://localhost:3000',
+                url: config.development.BASE_URL,
             },
         ],
         tags: [
