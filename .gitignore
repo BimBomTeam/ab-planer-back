@@ -175,3 +175,6 @@ cython_debug/
 
 # Ignorowanie pliku config
 /config/config.json
+
+# Dependency directories
+node_modules/

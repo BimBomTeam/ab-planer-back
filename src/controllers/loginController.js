@@ -16,6 +16,10 @@ exports.loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
+    if (!user.is_verified) {
+      return res.status(400).json({ message: 'Please verify your email' });
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({ message: 'Invalid email or password' });
