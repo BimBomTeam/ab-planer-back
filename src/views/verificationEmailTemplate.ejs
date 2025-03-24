@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="pl">
 <head>
     <style>
         body {
@@ -77,9 +76,8 @@
     <div class="container">
         <h2>Witaj w AB Planer!</h2>
         <p>Kliknij poniższy link, aby aktywować swoje konto:</p>
-        <a href="{{verificationLink}}" class="button">Aktywuj konto</a>
-        <p>Jeśli przycisk nie działa, kliknij tutaj: <a href="{{verificationLink}}"
-                class="fallback-link">{{verificationLink}}</a></p>
+        <a href="<%= verificationLink %>" class="button">Aktywuj konto</a>
+        <p>Jeśli przycisk nie działa, kliknij tutaj: <a href="<%= verificationLink %>" class="fallback-link"><%= verificationLink %></a></p>
         <p>Jeśli nie rejestrowałeś/aś się w naszej aplikacji, zignoruj ten e-mail.</p>
         <footer>
             <p>AB Planer &copy; 2025</p>

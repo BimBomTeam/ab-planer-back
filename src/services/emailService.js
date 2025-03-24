@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const fs = require('fs');
+const ejs = require('ejs');
 const path = require('path');
 const config = require('../../config/config.json');
 
@@ -16,9 +16,7 @@ const transporter = nodemailer.createTransport({
 const sendVerificationEmail = async (userEmail, token) => {
   const verificationLink = `${config.development.BASE_URL}/api/users/verify/${token}`;
 
-  const htmlTemplate = fs.readFileSync(path.join(__dirname, '../views/verificationEmailTemplate.html'), 'utf-8');
-
-  const htmlContent = htmlTemplate.replace(/{{verificationLink}}/g, verificationLink);
+  const htmlContent = await ejs.renderFile(path.join(__dirname, '../views/verificationEmailTemplate.ejs'), { verificationLink });
 
   const mailOptions = {
     from: `"AB Planer" <${config.development.EMAIL_USER}>`,

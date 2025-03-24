@@ -4,11 +4,14 @@ const userRoutes = require('./src/routes/userRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const config = require('./config/config.json');
+const path = require('path');
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'src', 'views'));
 
 // Konfiguracja Swaggera
 const swaggerOptions = {
@@ -42,4 +45,5 @@ app.use('/api/users', userRoutes);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`Swagger UI available at: ${config.development.BASE_URL}/api-docs`);
 });
