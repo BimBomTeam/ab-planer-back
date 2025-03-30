@@ -5,10 +5,10 @@ const { sendVerificationEmail } = require('../services/emailService');
 const config = require('../../config/config.json');
 
 exports.registerUser = async (req, res) => {
-  const { first_name, last_name, email, password, confirmPassword } = req.body;
+  const { first_name, last_name, email, password } = req.body;
 
   try {
-    if (!first_name || !last_name || !email || !password || !confirmPassword) {
+    if (!first_name || !last_name || !email || !password) {
       return res.status(400).json({ message: 'Wszystkie pola są wymagane' });
     }
     if (first_name.length > 255 || last_name.length > 255 || email.length > 255) {
@@ -16,9 +16,6 @@ exports.registerUser = async (req, res) => {
     }
     if (password.length < 8) {
       return res.status(400).json({ message: 'Hasło musi mieć co najmniej 8 znaków' });
-    }
-    if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Hasła nie są zgodne' });
     }
 
     const existingUser = await User.findOne({ where: { email } });

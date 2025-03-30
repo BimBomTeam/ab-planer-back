@@ -23,7 +23,6 @@ const verifyEmailController = require('../controllers/verifyEmailController');
  *               - last_name
  *               - email
  *               - password
- *               - confirmPassword
  *             properties:
  *               first_name:
  *                 type: string
@@ -35,9 +34,6 @@ const verifyEmailController = require('../controllers/verifyEmailController');
  *                 type: string
  *                 example: jan.kowalski@example.com
  *               password:
- *                 type: string
- *                 example: secret123
- *               confirmPassword:
  *                 type: string
  *                 example: secret123
  *     responses:
