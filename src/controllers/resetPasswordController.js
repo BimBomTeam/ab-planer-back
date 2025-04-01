@@ -89,3 +89,32 @@ exports.updatePassword = async (req, res) => {
         return res.status(500).json({ message: 'Błąd podczas resetowania hasła' });
     }
 };
+
+exports.renderResetPasswordForm = async (req, res) => {
+    const { token } = req.params;
+
+    try {
+        if (!token) {
+            console.log("Brak tokenu w URL");
+            return res.status(400).render("resetPasswordForm", { token: null, error: "Brak tokenu" });
+        }
+
+        const decoded = jwt.verify(token, config.development.JWT_SECRET);
+
+        const user = await User.findByPk(decoded.id);
+        if (!user) {
+            return res.status(400).render("resetPasswordForm", { token: null, error: "Nieprawidłowy token" });
+        }
+
+        if (user.password_changed_at) {
+            const tokenIssuedAt = new Date(decoded.iat * 1000);
+            if (new Date(user.password_changed_at) > tokenIssuedAt) {
+                return res.status(400).render("resetPasswordForm", { token: null, error: "Token unieważniony przez zmianę hasła" });
+            }
+        }
+
+        res.render("resetPasswordForm", { token, error: null });
+    } catch (err) {
+        return res.status(400).render("resetPasswordForm", { token: null, error: "Nieprawidłowy lub wygasły token" });
+    }
+};

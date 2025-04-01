@@ -170,9 +170,6 @@ router.post('/reset-password', resetPasswordController.requestPasswordReset);
  */
 router.post('/update-password', resetPasswordController.updatePassword);
 
-router.get('/reset-password/:token', (req, res) => {
-    const { token } = req.params;
-    res.render('resetPasswordForm', { token });
-});
+router.get('/reset-password/:token', resetPasswordController.renderResetPasswordForm);
 
 module.exports = router;
