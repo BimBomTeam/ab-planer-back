@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const { sendVerificationEmail } = require('../services/emailService');
 const config = require('../../config/config.json');
+const Config = require('../models/Config');
 
 exports.registerUser = async (req, res) => {
   const { first_name, last_name, email, password } = req.body;
@@ -16,6 +17,14 @@ exports.registerUser = async (req, res) => {
     }
     if (password.length < 8) {
       return res.status(400).json({ message: 'Hasło musi mieć co najmniej 8 znaków' });
+    }
+    
+    const configEntry = await Config.findOne();
+    if (configEntry?.is_comain_register) {
+      const allowedDomain = "@stud.akademiabialska.pl";
+      if (!email.endsWith(allowedDomain)) {
+        return res.status(400).json({ message: `Tylko e-maile z domeny ${allowedDomain} są dozwolone` });
+      }
     }
 
     const existingUser = await User.findOne({ where: { email } });
