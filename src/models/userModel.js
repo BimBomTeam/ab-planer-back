@@ -27,9 +27,13 @@ const User = sequelize.define('User', {
     allowNull: false,
     defaultValue: false,
   },
+  password_changed_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 }, {
   tableName: 'users',
-  timestamps: true,  
+  timestamps: true,
 });
 
 module.exports = User;

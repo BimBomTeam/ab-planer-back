@@ -8,12 +8,12 @@ exports.loginUser = async (req, res) => {
 
   try {
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+      return res.status(400).json({ message: 'Email i hasło są wymagane' });
     }
 
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+      return res.status(400).json({ message: 'Błędny email lub hasło' });
     }
 
     // if (!user.is_verified) {
@@ -22,7 +22,7 @@ exports.loginUser = async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+      return res.status(400).json({ message: 'Błędny email lub hasło' });
     }
 
     const token = jwt.sign(
@@ -32,7 +32,7 @@ exports.loginUser = async (req, res) => {
     );
 
     return res.status(200).json({
-      message: 'Login successful',
+      message: 'Logowanie przebugło pomyślnie',
       token: token,
       user: {
         id: user.id,

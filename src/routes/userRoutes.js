@@ -1,8 +1,10 @@
 const express = require('express');
+const path = require('path');
 const router = express.Router();
 const registerController = require('../controllers/registerController');
 const loginController = require('../controllers/loginController');
 const verifyEmailController = require('../controllers/verifyEmailController');
+const resetPasswordController = require('../controllers/resetPasswordController');
 
 /**
  * @swagger
@@ -99,5 +101,78 @@ router.post('/login', loginController.loginUser);
  *         description: Błąd weryfikacji lub nieprawidłowy token
  */
 router.get('/verify/:token', verifyEmailController.verifyEmail);
+
+/**
+ * @swagger
+ * /api/users/reset-password:
+ *   post:
+ *     summary: Wysłanie linku do resetu hasła
+ *     tags: 
+ *       - Authorization
+ *     description: Wysyła e-mail z linkiem do resetu hasła na podany adres e-mail
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: jan.kowalski@example.com
+ *     responses:
+ *       200:
+ *         description: E-mail z linkiem do resetu hasła został wysłany
+ *       400:
+ *         description: Nie znaleziono użytkownika lub nieprawidłowy adres e-mail
+ *       500:
+ *         description: Błąd podczas wysyłania e-maila
+ */
+router.post('/reset-password', resetPasswordController.requestPasswordReset);
+
+/**
+ * @swagger
+ * /api/users/update-password:
+ *   post:
+ *     summary: Resetowanie hasła użytkownika
+ *     tags: 
+ *       - Authorization
+ *     description: Umożliwia użytkownikowi ustawienie nowego hasła po kliknięciu w link resetujący
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - password
+ *               - confirmPassword
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: Token JWT przesłany w e-mailu resetującym
+ *               password:
+ *                 type: string
+ *                 description: Nowe hasło użytkownika
+ *               confirmPassword:
+ *                 type: string
+ *                 description: Powtórzone hasło dla weryfikacji
+ *     responses:
+ *       200:
+ *         description: Hasło zostało zaktualizowane pomyślnie
+ *       400:
+ *         description: Niepoprawne dane lub błąd walidacji
+ *       500:
+ *         description: Błąd serwera
+ */
+router.post('/update-password', resetPasswordController.updatePassword);
+
+router.get('/reset-password/:token', (req, res) => {
+    const { token } = req.params;
+    res.render('resetPasswordForm', { token });
+});
 
 module.exports = router;

@@ -28,4 +28,19 @@ const sendVerificationEmail = async (userEmail, token) => {
   await transporter.sendMail(mailOptions);
 };
 
-module.exports = { sendVerificationEmail };
+const sendResetPasswordEmail = async (userEmail, token) => {
+  const resetPasswordLink = `${config.development.BASE_URL}/api/users/reset-password/${token}`;
+
+  const htmlContent = await ejs.renderFile(path.join(__dirname, '../views/resetPasswordEmailTemplate.ejs'), { resetPasswordLink });
+
+  const mailOptions = {
+    from: `AB Planer <${config.development.EMAIL_USER}>`,
+    to: userEmail,
+    subject: 'Resetowanie hasła',
+    html: htmlContent,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+module.exports = { sendVerificationEmail, sendResetPasswordEmail };
