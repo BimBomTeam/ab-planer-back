@@ -31,6 +31,15 @@ module.exports = {
         allowNull: false,
         defaultValue: false,
       },
+      group_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Groups',     // <-- to musi wskazywać na tabelę Groups
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
       password_changed_at: {
         type: Sequelize.DATE,
         allowNull: true,

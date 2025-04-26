@@ -40,6 +40,7 @@ exports.registerUser = async (req, res) => {
       email,
       password: hashedPassword,
       is_verified: false,
+      group_id: null,
     });
 
     const verificationToken = jwt.sign({ id: newUser.id }, config.development.JWT_SECRET, { expiresIn: '24h' });
