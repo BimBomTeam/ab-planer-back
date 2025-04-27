@@ -123,4 +123,47 @@ router.put('/:id', groupController.updateGroup);
  */
 router.delete('/:id', groupController.deleteGroup);
 
+
+/**
+ * @swagger
+ * /api/groups/start-year/{start_year}:
+ *   get:
+ *     summary: Pobierz grupy na podstawie rocznika
+ *     tags:
+ *       - Groups
+ *     description: Zwraca listę grup, które zaczynają się w danym roczniku
+ *     parameters:
+ *       - in: path
+ *         name: start_year
+ *         required: true
+ *         description: Rocznik, dla którego chcesz pobrać grupy
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Lista grup dla danego rocznika
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   group_number:
+ *                     type: string
+ *                   group_name:
+ *                     type: string
+ *                   start_year:
+ *                     type: integer
+ *       400:
+ *         description: Błąd - rocznik musi być liczbą
+ *       404:
+ *         description: Brak grup dla podanego rocznika
+ *       500:
+ *         description: Błąd serwera
+ */
+router.get('/start-year/:start_year', groupController.getGroupsByStartYear);
+
 module.exports = router;

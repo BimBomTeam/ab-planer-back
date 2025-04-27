@@ -80,3 +80,30 @@ exports.deleteGroup = async (req, res) => {
     return res.status(500).json({ message: 'Błąd podczas usuwania grupy' });
   }
 };
+
+// Get groups by start year
+exports.getGroupsByStartYear = async (req, res) => {
+  try {
+    const { start_year } = req.params; // Pobieramy rocznik z parametrów
+
+    // Sprawdzamy, czy rocznik jest liczba
+    if (isNaN(start_year)) {
+      return res.status(400).json({ message: 'Rocznik musi być liczbą' });
+    }
+
+    const groups = await Group.findAll({
+      where: {
+        start_year: start_year // Filtrujemy grupy po roczniku
+      }
+    });
+
+    if (groups.length === 0) {
+      return res.status(404).json({ message: 'Brak grup dla podanego rocznika' });
+    }
+
+    return res.status(200).json(groups); // Zwracamy znalezione grupy
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Błąd podczas pobierania grup' });
+  }
+};
