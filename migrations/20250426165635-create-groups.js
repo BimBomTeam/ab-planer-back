@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       start_year: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING(7),
       },
       group_number: {
         type: Sequelize.INTEGER
