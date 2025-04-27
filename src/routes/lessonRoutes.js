@@ -163,4 +163,52 @@ router.put('/:id', lessonController.updateLesson);
  */
 router.delete('/:id', lessonController.deleteLesson);
 
+/**
+ * @swagger
+ * /api/lessons/group/{id}:
+ *   get:
+ *     summary: Pobierz wszystkie lekcje dla danej grupy
+ *     tags:
+ *       - Lessons
+ *     description: Zwraca wszystkie lekcje przypisane do danej grupy
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID grupy, dla której chcesz pobrać lekcje
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Lista lekcji dla danej grupy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   room:
+ *                     type: string
+ *                   title:
+ *                     type: string
+ *                   start:
+ *                     type: string
+ *                     format: date-time
+ *                   end:
+ *                     type: string
+ *                     format: date-time
+ *                   teacher_id:
+ *                     type: integer
+ *                   group_id:
+ *                     type: integer
+ *       404:
+ *         description: Grupa nie znaleziona
+ *       500:
+ *         description: Błąd serwera
+ */
+router.get('/group/:id', lessonController.getLessonsForGroup);
+
 module.exports = router;

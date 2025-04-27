@@ -1,5 +1,5 @@
 const Lesson = require('../models/lessonModel'); // Zakładam że masz już Lesson model
-
+const Group = require('../models/groupModel'); // Zakładam że masz już Group model
 // Create a new lesson
 exports.createLesson = async (req, res) => {
   const { room, title, start, end, teacher_id, lesson_type_id, group_id } = req.body;
@@ -104,5 +104,25 @@ exports.deleteLesson = async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Błąd podczas usuwania zajęć' });
+  }
+};
+
+exports.getLessonsForGroup = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const group = await Group.findByPk(id);
+    if (!group) {
+      return res.status(404).json({ message: 'Grupa nie znaleziona' });
+    }
+
+    const lessons = await Lesson.findAll({
+      where: { group_id: id }
+    });
+
+    return res.status(200).json(lessons);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Błąd podczas pobierania zajęć dla grupy' });
   }
 };
