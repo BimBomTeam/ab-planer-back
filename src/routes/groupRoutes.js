@@ -19,7 +19,7 @@ const groupController = require('../controllers/groupController');
  *               - group_number
  *             properties:
  *               start_year:
- *                 type: integer
+ *                 type: string
  *                 example: 2023
  *               group_number:
  *                 type: integer
@@ -87,7 +87,7 @@ router.get('/:id', groupController.getGroupById);
  *             type: object
  *             properties:
  *               start_year:
- *                 type: integer
+ *                 type: string
  *                 example: 2024
  *               group_number:
  *                 type: integer
@@ -138,7 +138,7 @@ router.delete('/:id', groupController.deleteGroup);
  *         required: true
  *         description: Rocznik, dla którego chcesz pobrać grupy
  *         schema:
- *           type: integer
+ *           type: string
  *     responses:
  *       200:
  *         description: Lista grup dla danego rocznika
@@ -156,7 +156,7 @@ router.delete('/:id', groupController.deleteGroup);
  *                   group_name:
  *                     type: string
  *                   start_year:
- *                     type: integer
+ *                     type: string
  *       400:
  *         description: Błąd - rocznik musi być liczbą
  *       404:

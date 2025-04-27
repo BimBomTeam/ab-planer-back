@@ -1,11 +1,16 @@
 const Group = require('../models/groupModel');
 
+// Tworzenie nowej grupy
 exports.createGroup = async (req, res) => {
   try {
     const { start_year, group_number, group_name } = req.body;
 
     if (!start_year || !group_number) {
       return res.status(400).json({ message: 'start_year i group_number są wymagane' });
+    }
+
+    if (typeof start_year !== 'string') {
+      return res.status(400).json({ message: 'start_year musi być typu string' });
     }
 
     const group = await Group.create({ start_year, group_number, group_name });
@@ -16,6 +21,7 @@ exports.createGroup = async (req, res) => {
   }
 };
 
+// Pobieranie wszystkich grup
 exports.getAllGroups = async (req, res) => {
   try {
     const groups = await Group.findAll();
@@ -26,6 +32,7 @@ exports.getAllGroups = async (req, res) => {
   }
 };
 
+// Pobieranie jednej grupy po ID
 exports.getGroupById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -42,6 +49,7 @@ exports.getGroupById = async (req, res) => {
   }
 };
 
+// Aktualizacja grupy
 exports.updateGroup = async (req, res) => {
   try {
     const { id } = req.params;
@@ -50,6 +58,10 @@ exports.updateGroup = async (req, res) => {
     const group = await Group.findByPk(id);
     if (!group) {
       return res.status(404).json({ message: 'Grupa nie znaleziona' });
+    }
+
+    if (start_year !== undefined && typeof start_year !== 'string') {
+      return res.status(400).json({ message: 'start_year musi być typu string' });
     }
 
     group.start_year = start_year ?? group.start_year;
@@ -64,6 +76,7 @@ exports.updateGroup = async (req, res) => {
   }
 };
 
+// Usuwanie grupy
 exports.deleteGroup = async (req, res) => {
   try {
     const { id } = req.params;
@@ -81,27 +94,24 @@ exports.deleteGroup = async (req, res) => {
   }
 };
 
-// Get groups by start year
+// Pobieranie grup po start_year
 exports.getGroupsByStartYear = async (req, res) => {
   try {
-    const { start_year } = req.params; // Pobieramy rocznik z parametrów
+    const { start_year } = req.params;
 
-    // Sprawdzamy, czy rocznik jest liczba
-    if (isNaN(start_year)) {
-      return res.status(400).json({ message: 'Rocznik musi być liczbą' });
+    if (!start_year || typeof start_year !== 'string') {
+      return res.status(400).json({ message: 'start_year musi być typu string' });
     }
 
     const groups = await Group.findAll({
-      where: {
-        start_year: start_year // Filtrujemy grupy po roczniku
-      }
+      where: { start_year }
     });
 
     if (groups.length === 0) {
       return res.status(404).json({ message: 'Brak grup dla podanego rocznika' });
     }
 
-    return res.status(200).json(groups); // Zwracamy znalezione grupy
+    return res.status(200).json(groups);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Błąd podczas pobierania grup' });

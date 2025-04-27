@@ -8,7 +8,7 @@ const Group = sequelize.define('Group', {
     autoIncrement: true
   },
   start_year: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING(7),
     allowNull: false
   },
   group_number: {
