@@ -5,6 +5,7 @@ const lessonRoutes = require('./src/routes/lessonRoutes');
 const teacherRoutes = require('./src/routes/teacherRoutes');
 const lessonTypeRoutes = require('./src/routes/lessonTypeRoutes');
 const groupRoutes = require('./src/routes/groupRoutes');
+const majorRoutes = require('./src/routes/majorRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const config = require('./config/config.json');
@@ -62,6 +63,7 @@ app.use('/api/lessons', lessonRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/lesson-types', lessonTypeRoutes);
 app.use('/api/groups', groupRoutes);
+app.use('/api/majors', majorRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
