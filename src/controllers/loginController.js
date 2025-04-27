@@ -26,23 +26,21 @@ exports.loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { 
+        email: user.email,
+        first_name: user.first_name, 
+        last_name: user.last_name 
+      },
       config.development.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '24h' }
     );
 
     return res.status(200).json({
-      message: 'Logowanie przebugło pomyślnie',
+      message: 'Logowanie przeszło pomyślnie',
       token: token,
-      user: {
-        id: user.id,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name
-      }
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: 'Error logging in' });
+    return res.status(500).json({ message: 'Błąd logowania' });
   }
 };
