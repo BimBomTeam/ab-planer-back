@@ -1,6 +1,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const userRoutes = require('./src/routes/userRoutes');
+const lessonRoutes = require('./src/routes/lessonRoutes');
+const teacherRoutes = require('./src/routes/teacherRoutes');
+const lessonTypeRoutes = require('./src/routes/lessonTypeRoutes');
+const groupRoutes = require('./src/routes/groupRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const config = require('./config/config.json');
@@ -54,6 +58,10 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use('/api/users', userRoutes);
+app.use('/api/lessons', lessonRoutes);
+app.use('/api/teachers', teacherRoutes);
+app.use('/api/lesson-types', lessonTypeRoutes);
+app.use('/api/groups', groupRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
