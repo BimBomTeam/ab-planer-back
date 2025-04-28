@@ -50,13 +50,40 @@ const swaggerOptions = {
                 name: 'Authorization',
                 description: 'Endpointy odpowiedzialne za rejestrację i logowanie użytkowników',
             },
+            {
+                name: 'Groups',
+                description: 'Endpointy odpowiedzialne za zarządzanie grupami',
+            },
+            {
+                name: 'Lessons',
+                description: 'Endpointy odpowiedzialne za zarządzanie lekcjami',
+            },
+            {
+                name: 'LessonTypes',
+                description: 'Endpointy odpowiedzialne za zarządzanie typami lekcji',
+            },
+            {
+                name: 'Majors',
+                description: 'Endpointy odpowiedzialne za zarządzanie kierunkami studiów',
+            },
+            {
+                name: 'Teachers',
+                description: 'Endpointy odpowiedzialne za zarządzanie nauczycielami',
+            },
         ],
     },
     apis: ['./src/routes/*.js'],
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+const options = {
+    swaggerOptions: {
+        docExpansion: 'none'
+    }
+};
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
 
 app.use('/api/users', userRoutes);
 app.use('/api/lessons', lessonRoutes);
