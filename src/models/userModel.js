@@ -32,6 +32,16 @@ const User = sequelize.define('User', {
     allowNull: false,
     defaultValue: false,
   },
+  group_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Groups',
+      key: 'id',
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  },
   password_changed_at: {
     type: DataTypes.DATE,
     allowNull: true,

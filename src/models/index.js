@@ -19,8 +19,8 @@ Group.hasMany(Lesson);
 Lesson.belongsTo(Group);
 
 // Relacje dla User
-Group.hasMany(User);
-User.belongsTo(Group);
+Group.hasMany(User, { foreignKey: 'group_id' });
+User.belongsTo(Group, { foreignKey: 'group_id' });
 
 // Relacje dla Major i Group
 Major.hasMany(Group, { foreignKey: 'major_id' });

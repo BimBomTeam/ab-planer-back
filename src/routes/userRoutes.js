@@ -5,6 +5,7 @@ const registerController = require('../controllers/registerController');
 const loginController = require('../controllers/loginController');
 const verifyEmailController = require('../controllers/verifyEmailController');
 const resetPasswordController = require('../controllers/resetPasswordController');
+const userController = require('../controllers/userController');
 
 /**
  * @swagger
@@ -171,5 +172,52 @@ router.post('/reset-password', resetPasswordController.requestPasswordReset);
 router.post('/update-password', resetPasswordController.updatePassword);
 
 router.get('/reset-password/:token', resetPasswordController.renderResetPasswordForm);
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   put:
+ *     summary: Aktualizuje dane użytkownika
+ *     tags:
+ *       - Użytkownicy
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID użytkownika do aktualizacji
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               first_name:
+ *                 type: string
+ *                 example: Anna
+ *               last_name:
+ *                 type: string
+ *                 example: Nowak
+ *               email:
+ *                 type: string
+ *                 example: anna.nowak@example.com
+ *               group_id:
+ *                 type: integer
+ *                 example: 2
+ *               role:
+ *                 type: string
+ *                 enum: [user, admin]
+ *                 example: user
+ *     responses:
+ *       200:
+ *         description: Użytkownik zaktualizowany pomyślnie
+ *       404:
+ *         description: Użytkownik nie znaleziony
+ *       500:
+ *         description: Błąd serwera
+ */
+router.put('/:id', userController.updateUser);
 
 module.exports = router;
