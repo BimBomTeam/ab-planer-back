@@ -6,17 +6,15 @@ const Group = require('./groupModel');
 const User = require('./userModel');
 const Major = require('./majorModel');
 
-// Relacje
-
 // Relacje dla Lesson
-Teacher.hasMany(Lesson);
-Lesson.belongsTo(Teacher);
+Teacher.hasMany(Lesson, { foreignKey: 'teacher_id' });
+Lesson.belongsTo(Teacher, { foreignKey: 'teacher_id' });
 
-LessonType.hasMany(Lesson);
-Lesson.belongsTo(LessonType);
+LessonType.hasMany(Lesson, { foreignKey: 'lesson_type_id' });
+Lesson.belongsTo(LessonType, { foreignKey: 'lesson_type_id' });
 
-Group.hasMany(Lesson);
-Lesson.belongsTo(Group);
+Group.hasMany(Lesson, { foreignKey: 'group_id' });
+Lesson.belongsTo(Group, { foreignKey: 'group_id' });
 
 // Relacje dla User
 Group.hasMany(User, { foreignKey: 'group_id' });

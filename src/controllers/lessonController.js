@@ -1,5 +1,9 @@
-const Lesson = require('../models/lessonModel'); // Zakładam że masz już Lesson model
-const Group = require('../models/groupModel'); // Zakładam że masz już Group model
+const Lesson = require('../models/lessonModel');
+const Group = require('../models/groupModel');
+const Teacher = require('../models/teacherModel');
+const LessonType = require('../models/lessonTypeModel');
+
+
 // Create a new lesson
 exports.createLesson = async (req, res) => {
   const { room, title, start, end, teacher_id, lesson_type_id, group_id } = req.body;
@@ -32,7 +36,13 @@ exports.createLesson = async (req, res) => {
 // Get all lessons
 exports.getAllLessons = async (req, res) => {
   try {
-    const lessons = await Lesson.findAll();
+    const lessons = await Lesson.findAll({
+      include: [
+        { model: Teacher, attributes: ['name'] },
+        { model: LessonType, attributes: ['name'] },
+        { model: Group, attributes: ['group_number', 'group_name', 'start_year'] },
+      ],
+    });
     return res.status(200).json(lessons);
   } catch (err) {
     console.error(err);
@@ -45,7 +55,13 @@ exports.getLessonById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const lesson = await Lesson.findByPk(id);
+    const lesson = await Lesson.findByPk(id, {
+      include: [
+        { model: Teacher, attributes: ['name'] },
+        { model: LessonType, attributes: ['name'] },
+        { model: Group, attributes: ['group_number', 'group_name', 'start_year'] },
+      ],
+    });
 
     if (!lesson) {
       return res.status(404).json({ message: 'Zajęcia nie zostały znalezione' });
