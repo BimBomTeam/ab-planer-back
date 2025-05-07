@@ -8,7 +8,7 @@ const Group = sequelize.define('Group', {
     autoIncrement: true
   },
   start_year: {
-    type: DataTypes.STRING(7),
+    type: DataTypes.INTEGER,
     allowNull: false
   },
   group_number: {
@@ -18,6 +18,16 @@ const Group = sequelize.define('Group', {
   group_name: {
     type: DataTypes.STRING(100),
     allowNull: true
+  },
+  major_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Majors',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL'
   }
 }, {
   tableName: 'Groups',

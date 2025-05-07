@@ -5,6 +5,7 @@ const lessonRoutes = require('./src/routes/lessonRoutes');
 const teacherRoutes = require('./src/routes/teacherRoutes');
 const lessonTypeRoutes = require('./src/routes/lessonTypeRoutes');
 const groupRoutes = require('./src/routes/groupRoutes');
+const majorRoutes = require('./src/routes/majorRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const config = require('./config/config.json');
@@ -63,19 +64,47 @@ const swaggerOptions = {
                 name: 'Authorization',
                 description: 'Endpointy odpowiedzialne za rejestrację i logowanie użytkowników',
             },
+            {
+                name: 'Groups',
+                description: 'Endpointy odpowiedzialne za zarządzanie grupami',
+            },
+            {
+                name: 'Lessons',
+                description: 'Endpointy odpowiedzialne za zarządzanie lekcjami',
+            },
+            {
+                name: 'LessonTypes',
+                description: 'Endpointy odpowiedzialne za zarządzanie typami lekcji',
+            },
+            {
+                name: 'Majors',
+                description: 'Endpointy odpowiedzialne za zarządzanie kierunkami studiów',
+            },
+            {
+                name: 'Teachers',
+                description: 'Endpointy odpowiedzialne za zarządzanie nauczycielami',
+            },
         ],
     },
     apis: ['./src/routes/*.js'],
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+const options = {
+    swaggerOptions: {
+        docExpansion: 'none'
+    }
+};
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
 
 app.use('/api/users', userRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/lesson-types', lessonTypeRoutes);
 app.use('/api/groups', groupRoutes);
+app.use('/api/majors', majorRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
