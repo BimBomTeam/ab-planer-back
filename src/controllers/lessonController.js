@@ -2,6 +2,7 @@ const Lesson = require('../models/lessonModel');
 const Group = require('../models/groupModel');
 const Teacher = require('../models/teacherModel');
 const LessonType = require('../models/lessonTypeModel');
+const { Sequelize, Op } = require('sequelize');
 
 
 // Create a new lesson
@@ -140,5 +141,45 @@ exports.getLessonsForGroup = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Błąd podczas pobierania zajęć dla grupy' });
+  }
+};
+
+// Get lessons for a specific group on a given date
+exports.getLessonsByDateAndGroup = async (req, res) => {
+  const { date, group_id } = req.params;
+
+  // Parsowanie daty z formatu 'YYYY-MM-DD' (np. '2025-05-07')
+  const parsedDate = new Date(date);
+
+  if (isNaN(parsedDate.getTime())) {
+    return res.status(400).json({ message: 'Niepoprawny format daty' });
+  }
+
+  try {
+    // Pobranie lekcji z uwzględnieniem daty i grupy
+    const lessons = await Lesson.findAll({
+      where: {
+        group_id: group_id,
+        start: {
+          [Sequelize.Op.gte]: new Date(parsedDate.setHours(0, 0, 0, 0)),
+        },
+        end: {
+          [Sequelize.Op.lte]: new Date(parsedDate.setHours(23, 59, 59, 999)),
+        }
+      },
+      include: [
+        { model: Teacher, attributes: ['name'] },
+        { model: LessonType, attributes: ['name'] },
+      ]
+    });
+
+    if (lessons.length === 0) {
+      return res.status(404).json({ message: 'Brak zajęć dla tej grupy w wybranym dniu' });
+    }
+
+    return res.status(200).json(lessons);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Błąd podczas pobierania zajęć' });
   }
 };

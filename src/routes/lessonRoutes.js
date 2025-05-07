@@ -212,4 +212,63 @@ router.delete('/:id', lessonController.deleteLesson);
  */
 router.get('/group/:id', lessonController.getLessonsForGroup);
 
+// Get lessons for a specific group on a specific day
+/**
+ * @swagger
+ * /api/lessons/date/{date}/group/{group_id}:
+ *   get:
+ *     summary: Pobierz lekcje dla grupy w danym dniu
+ *     tags:
+ *       - Lessons
+ *     description: Zwraca lekcje przypisane do grupy na określony dzień.
+ *     parameters:
+ *       - in: path
+ *         name: date
+ *         required: true
+ *         description: Data, dla której chcesz pobrać lekcje (w formacie YYYY-MM-DD)
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: group_id
+ *         required: true
+ *         description: ID grupy, dla której chcesz pobrać lekcje
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Lista lekcji dla danej grupy w danym dniu
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   room:
+ *                     type: string
+ *                   title:
+ *                     type: string
+ *                   start:
+ *                     type: string
+ *                     format: date-time
+ *                   end:
+ *                     type: string
+ *                     format: date-time
+ *                   teacher_id:
+ *                     type: integer
+ *                   lesson_type_id:
+ *                     type: integer
+ *                   group_id:
+ *                     type: integer
+ *       404:
+ *         description: Brak lekcji dla danej grupy w danym dniu
+ *       400:
+ *         description: Niepoprawny format daty
+ *       500:
+ *         description: Błąd serwera
+ */
+router.get('/date/:date/group/:group_id', lessonController.getLessonsByDateAndGroup);
+
 module.exports = router;
