@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const lessonController = require('../controllers/lessonController');
+const authorizeRole = require('../middlewares/authorizeRole');
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ const lessonController = require('../controllers/lessonController');
  *       400:
  *         description: Błąd walidacji danych
  */
-router.post('/', lessonController.createLesson);
+router.post('/', authorizeRole, lessonController.createLesson);
 
 /**
  * @swagger

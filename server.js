@@ -44,6 +44,20 @@ const swaggerOptions = {
                 url: config.development.BASE_URL,
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
         tags: [
             {
                 name: 'Authorization',
