@@ -25,7 +25,7 @@ exports.fetchUser = async (req, res) => {
       attributes: ['id', 'first_name', 'last_name', 'email', 'role'],
       include: {
         model: Group,
-        attributes: ['group_number', 'group_name', 'start_year'],
+        attributes: ['id','group_number', 'group_name', 'start_year'],
         include: {
           model: Major,
           attributes: ['name'],
