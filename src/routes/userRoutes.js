@@ -6,6 +6,7 @@ const loginController = require('../controllers/loginController');
 const verifyEmailController = require('../controllers/verifyEmailController');
 const resetPasswordController = require('../controllers/resetPasswordController');
 const userController = require('../controllers/userController');
+const auth = require('../middlewares/authMiddleware');
 
 /**
  * @swagger
@@ -212,5 +213,55 @@ router.get('/reset-password/:token', resetPasswordController.renderResetPassword
  *         description: Błąd serwera
  */
 router.put('/:id', userController.updateUser);
+
+/**
+ * @swagger
+ * /api/users/me:
+ *   get:
+ *     summary: Pobierz aktualnie zalogowanego użytkownika
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dane użytkownika
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 first_name:
+ *                   type: string
+ *                 last_name:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 role:
+ *                   type: string
+ *                 Group:
+ *                   type: object
+ *                   properties:
+ *                     group_number:
+ *                       type: string
+ *                     group_name:
+ *                       type: string
+ *                     start_year:
+ *                       type: integer
+ *                     Major:
+ *                       type: object
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *       401:
+ *         description: Brak tokena
+ *       403:
+ *         description: Nieprawidłowy token
+ *       500:
+ *         description: Błąd serwera
+ */
+router.get('/me', auth, userController.fetchUser);
 
 module.exports = router;
