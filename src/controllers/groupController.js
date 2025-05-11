@@ -1,5 +1,5 @@
 const Group = require('../models/groupModel');
-
+const Major = require('../models/majorModel');
 // Tworzenie nowej grupy
 exports.createGroup = async (req, res) => {
   try {
@@ -24,7 +24,14 @@ exports.createGroup = async (req, res) => {
 // Pobieranie wszystkich grup
 exports.getAllGroups = async (req, res) => {
   try {
-    const groups = await Group.findAll();
+    const groups = await Group.findAll({
+      include: [
+        {
+          model: Major,
+          attributes: ['name'],
+        },
+      ],
+    });
     return res.status(200).json(groups);
   } catch (error) {
     console.error(error);
