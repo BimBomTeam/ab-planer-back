@@ -43,7 +43,12 @@ exports.getAllGroups = async (req, res) => {
 exports.getGroupById = async (req, res) => {
   try {
     const { id } = req.params;
-    const group = await Group.findByPk(id);
+    const group = await Group.findByPk(id, {
+      include: {
+        model: Major,
+        attributes: ['name']
+      }
+    });
 
     if (!group) {
       return res.status(404).json({ message: 'Grupa nie znaleziona' });
