@@ -179,7 +179,7 @@ router.get('/reset-password/:token', resetPasswordController.renderResetPassword
  *   put:
  *     summary: Aktualizuje dane użytkownika
  *     tags:
- *       - Użytkownicy
+ *       - Users
  *     parameters:
  *       - in: path
  *         name: id

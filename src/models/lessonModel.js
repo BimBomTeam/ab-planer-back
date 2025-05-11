@@ -17,6 +17,15 @@ const Lesson = sequelize.define('Lesson', {
     type: DataTypes.DATE,
     allowNull: false
   },
+  frequency: {
+    type: DataTypes.ENUM('weekly', 'bi-weekly'),
+    allowNull: false,
+    defaultValue: 'weekly'
+  },
+  term: {
+    type: DataTypes.ENUM('winter', 'summer'),
+    allowNull: false
+  },
   teacher_id: {
     type: DataTypes.INTEGER
   },

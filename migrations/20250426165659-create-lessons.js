@@ -21,6 +21,15 @@ module.exports = {
       end: {
         type: Sequelize.DATE
       },
+      frequency: {
+        type: Sequelize.ENUM('weekly', 'bi-weekly'),
+        allowNull: false,
+        defaultValue: 'weekly'
+      },
+      term: {
+        type: Sequelize.ENUM('winter', 'summer'),
+        allowNull: false
+      },
       teacher_id: {
         type: Sequelize.INTEGER,
         references: {

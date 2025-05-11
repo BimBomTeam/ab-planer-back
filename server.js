@@ -84,6 +84,10 @@ const swaggerOptions = {
                 name: 'Teachers',
                 description: 'Endpointy odpowiedzialne za zarządzanie nauczycielami',
             },
+        {
+                name: 'Users',
+                description: 'Endpointy odpowiedzialne za zarządzanie użytkownikami',
+            },
         ],
     },
     apis: ['./src/routes/*.js'],

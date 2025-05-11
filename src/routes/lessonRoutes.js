@@ -21,6 +21,8 @@ const authorizeRole = require('../middlewares/authorizeRole');
  *               - title
  *               - start
  *               - end
+ *               - frequency
+ *               - term
  *             properties:
  *               room:
  *                 type: string
@@ -45,6 +47,14 @@ const authorizeRole = require('../middlewares/authorizeRole');
  *               group_id:
  *                 type: integer
  *                 example: 3
+ *               frequency:
+ *                 type: string
+ *                 enum: [weekly, bi-weekly]
+ *                 example: weekly
+ *               term:
+ *                 type: string
+ *                 enum: [winter, summer]
+ *                 example: winter
  *     responses:
  *       201:
  *         description: Zajęcia zostały utworzone pomyślnie
@@ -134,6 +144,14 @@ router.get('/:id', lessonController.getLessonById);
  *               group_id:
  *                 type: integer
  *                 example: 4
+ *               frequency:
+ *                 type: string
+ *                 enum: [weekly, bi-weekly]
+ *                 example: weekly
+ *               term:
+ *                 type: string
+ *                 enum: [winter, summer]
+ *                 example: winter
  *     responses:
  *       200:
  *         description: Zajęcia zaktualizowane
@@ -164,55 +182,6 @@ router.put('/:id', lessonController.updateLesson);
  */
 router.delete('/:id', lessonController.deleteLesson);
 
-/**
- * @swagger
- * /api/lessons/group/{id}:
- *   get:
- *     summary: Pobierz wszystkie lekcje dla danej grupy
- *     tags:
- *       - Lessons
- *     description: Zwraca wszystkie lekcje przypisane do danej grupy
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID grupy, dla której chcesz pobrać lekcje
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Lista lekcji dla danej grupy
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   room:
- *                     type: string
- *                   title:
- *                     type: string
- *                   start:
- *                     type: string
- *                     format: date-time
- *                   end:
- *                     type: string
- *                     format: date-time
- *                   teacher_id:
- *                     type: integer
- *                   group_id:
- *                     type: integer
- *       404:
- *         description: Grupa nie znaleziona
- *       500:
- *         description: Błąd serwera
- */
-router.get('/group/:id', lessonController.getLessonsForGroup);
-
-// Get lessons for a specific group on a specific day
 /**
  * @swagger
  * /api/lessons/date/{date}/group/{group_id}:
@@ -262,6 +231,10 @@ router.get('/group/:id', lessonController.getLessonsForGroup);
  *                     type: integer
  *                   group_id:
  *                     type: integer
+ *                   frequency:
+ *                     type: string
+ *                   term:
+ *                     type: string
  *       404:
  *         description: Brak lekcji dla danej grupy w danym dniu
  *       400:

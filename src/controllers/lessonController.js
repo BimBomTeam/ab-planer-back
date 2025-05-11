@@ -2,31 +2,137 @@ const Lesson = require('../models/lessonModel');
 const Group = require('../models/groupModel');
 const Teacher = require('../models/teacherModel');
 const LessonType = require('../models/lessonTypeModel');
+const Major = require('../models/majorModel');
 const { Sequelize, Op } = require('sequelize');
 
+// Helper function to generate all lesson dates with strict term boundaries
+const generateLessonDates = async (lessonData) => {
+  const { start, end, frequency, term, group_id } = lessonData;
 
-// Create a new lesson
+  const initialDate = new Date(start);
+
+  let termStart, termEnd;
+  const year = initialDate.getFullYear();
+
+  if (term === 'winter') {
+    termStart = new Date(`${year}-10-01T00:00:00`);
+    termEnd = new Date(`${year + 1}-01-30T23:59:59`);
+  } else {
+    termStart = new Date(`${year}-02-24T00:00:00`);
+    termEnd = new Date(`${year}-06-20T23:59:59`);
+  }
+
+  const lessonStart = new Date(Math.max(initialDate, termStart));
+
+
+  if (lessonStart > termEnd) {
+    return [];
+  }
+
+  const dayOfWeek = lessonStart.getDay();
+
+  const dates = [];
+  let currentDate = new Date(lessonStart);
+
+  while (currentDate <= termEnd) {
+    dates.push(new Date(currentDate));
+
+    const incrementDays = frequency === 'weekly' ? 7 : 14;
+    currentDate.setDate(currentDate.getDate() + incrementDays);
+
+    while (currentDate.getDay() !== dayOfWeek && currentDate <= termEnd) {
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+  }
+
+  const lessonRecords = dates.map(date => {
+    const lessonStartTime = new Date(date);
+    lessonStartTime.setHours(
+      new Date(start).getHours(),
+      new Date(start).getMinutes(),
+      new Date(start).getSeconds()
+    );
+
+    const lessonEndTime = new Date(date);
+    lessonEndTime.setHours(
+      new Date(end).getHours(),
+      new Date(end).getMinutes(),
+      new Date(end).getSeconds()
+    );
+
+    return {
+      ...lessonData,
+      start: lessonStartTime,
+      end: lessonEndTime,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+  });
+
+  if (lessonRecords.length > 0) {
+    await Lesson.bulkCreate(lessonRecords);
+  }
+
+  return lessonRecords;
+};
+
+// Create a new lesson (and generate all occurrences)
 exports.createLesson = async (req, res) => {
-  const { room, title, start, end, teacher_id, lesson_type_id, group_id } = req.body;
+  const { room, title, start, end, teacher_id, lesson_type_id, group_id, frequency, term } = req.body;
 
   try {
-    if (!title || !start || !end) {
-      return res.status(400).json({ message: 'Tytuł, data rozpoczęcia i zakończenia są wymagane' });
+    if (!title || !start || !end || !frequency || !term) {
+      return res.status(400).json({
+        message: 'Tytuł, data rozpoczęcia, zakończenia, częstotliwość i semestr są wymagane'
+      });
     }
 
-    const lesson = await Lesson.create({
+    // Validate term dates
+    const startDate = new Date(start);
+    const termYear = startDate.getFullYear();
+
+    let termStart, termEnd;
+    if (term === 'winter') {
+      termStart = new Date(`${termYear}-10-01`);
+      termEnd = new Date(`${termYear + 1}-01-30`);
+    } else {
+      termStart = new Date(`${termYear}-02-24`);
+      termEnd = new Date(`${termYear}-06-20`);
+    }
+
+    if (startDate < termStart || startDate > termEnd) {
+      return res.status(400).json({
+        message: `Data rozpoczęcia zajęć musi mieścić się w semestrze (${termStart.toLocaleDateString()} - ${termEnd.toLocaleDateString()})`
+      });
+    }
+
+    // Generate all lesson dates (including the first one)
+    const generatedLessons = await generateLessonDates({
       room,
       title,
       start,
       end,
       teacher_id,
       lesson_type_id,
-      group_id
+      group_id,
+      frequency,
+      term
     });
+
+    if (generatedLessons.length === 0) {
+      return res.status(400).json({
+        message: 'Nie udało się wygenerować zajęć w podanym semestrze'
+      });
+    }
+
+    // The first generated lesson will serve as our "template"
+    const firstLesson = generatedLessons[0];
 
     return res.status(201).json({
       message: 'Zajęcia zostały utworzone pomyślnie',
-      lesson
+      firstLesson: firstLesson,
+      generatedLessons: generatedLessons.length,
+      termPeriod: `${termStart.toLocaleDateString()} - ${termEnd.toLocaleDateString()}`
     });
   } catch (err) {
     console.error(err);
@@ -78,7 +184,7 @@ exports.getLessonById = async (req, res) => {
 // Update a lesson
 exports.updateLesson = async (req, res) => {
   const { id } = req.params;
-  const { room, title, start, end, teacher_id, lesson_type_id, group_id } = req.body;
+  const { room, title, start, end, teacher_id, lesson_type_id, group_id, frequency, term } = req.body;
 
   try {
     const lesson = await Lesson.findByPk(id);
@@ -94,7 +200,9 @@ exports.updateLesson = async (req, res) => {
       end,
       teacher_id,
       lesson_type_id,
-      group_id
+      group_id,
+      frequency,
+      term
     });
 
     return res.status(200).json({ message: 'Zajęcia zostały zaktualizowane', lesson });
@@ -124,31 +232,10 @@ exports.deleteLesson = async (req, res) => {
   }
 };
 
-exports.getLessonsForGroup = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const group = await Group.findByPk(id);
-    if (!group) {
-      return res.status(404).json({ message: 'Grupa nie znaleziona' });
-    }
-
-    const lessons = await Lesson.findAll({
-      where: { group_id: id }
-    });
-
-    return res.status(200).json(lessons);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Błąd podczas pobierania zajęć dla grupy' });
-  }
-};
-
 // Get lessons for a specific group on a given date
 exports.getLessonsByDateAndGroup = async (req, res) => {
   const { date, group_id } = req.params;
 
-  // Parsowanie daty z formatu 'YYYY-MM-DD' (np. '2025-05-07')
   const parsedDate = new Date(date);
 
   if (isNaN(parsedDate.getTime())) {
@@ -156,7 +243,6 @@ exports.getLessonsByDateAndGroup = async (req, res) => {
   }
 
   try {
-    // Pobranie lekcji z uwzględnieniem daty i grupy
     const lessons = await Lesson.findAll({
       where: {
         group_id: group_id,
@@ -170,6 +256,16 @@ exports.getLessonsByDateAndGroup = async (req, res) => {
       include: [
         { model: Teacher, attributes: ['name'] },
         { model: LessonType, attributes: ['name'] },
+        {
+          model: Group,
+          attributes: ['group_number', 'start_year', 'group_name'],
+          include: [
+            {
+              model: Major,
+              attributes: ['name'],
+            }
+          ]
+        }
       ]
     });
 
