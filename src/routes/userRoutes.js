@@ -200,16 +200,9 @@ router.get('/reset-password/:token', resetPasswordController.renderResetPassword
  *               last_name:
  *                 type: string
  *                 example: Nowak
- *               email:
- *                 type: string
- *                 example: anna.nowak@example.com
  *               group_id:
  *                 type: integer
  *                 example: 2
- *               role:
- *                 type: string
- *                 enum: [user, admin]
- *                 example: user
  *     responses:
  *       200:
  *         description: Użytkownik zaktualizowany pomyślnie
